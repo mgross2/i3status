@@ -144,6 +144,7 @@ add_project_arguments('-D_GNU_SOURCE', language: 'c')
 # https://mesonbuild.com/howtox.html#add-math-library-lm-portably
 m_dep = cc.find_library('m', required: false)
 rt_dep = cc.find_library('rt', required: false)
+x_dep = cc.find_library('X11', required: true)
 
 confuse_dep = dependency('libconfuse', method: 'pkg-config')
 yajl_dep = dependency('yajl', method: 'pkg-config')
@@ -170,8 +171,10 @@ i3status_srcs = [
   'src/print_time.c',
   'src/print_volume.c',
   'src/print_wireless_info.c',
+  'src/print_key_indicator.c',
   'src/print_file_contents.c',
   'src/process_runs.c',
+  'src/print_key_indicator.c',
 ]
 
 thread_dep = dependency('threads')
@@ -180,6 +183,7 @@ i3status_deps = [
   thread_dep,
   m_dep,
   rt_dep,
+  x_dep,
   confuse_dep,
   yajl_dep,
   config_h,
@@ -202,7 +206,7 @@ if host_os == 'netbsd'
   i3status_deps += [prop_dep]
 endif
 
-inc = include_directories('include')
+inc = include_directories('include', '/usr/include/')
 
 executable(
   'i3status',

@@ -443,6 +443,18 @@ int main(int argc, char *argv[]) {
         CFG_CUSTOM_SEP_BLOCK_WIDTH_OPT,
         CFG_END()};
 
+    cfg_opt_t key_indicator_opts[] = {
+        CFG_STR("format", "%content", CFGF_NONE),
+        CFG_STR("format_bad", "%title - %errno: %error", CFGF_NONE),
+        CFG_STR("path", NULL, CFGF_NONE),
+        CFG_INT("max_characters", 255, CFGF_NONE),
+        CFG_CUSTOM_ALIGN_OPT,
+        CFG_CUSTOM_COLOR_OPTS,
+        CFG_CUSTOM_MIN_WIDTH_OPT,
+        CFG_CUSTOM_SEPARATOR_OPT,
+        CFG_CUSTOM_SEP_BLOCK_WIDTH_OPT,
+        CFG_END()};
+
     cfg_opt_t read_opts[] = {
         CFG_STR("format", "%content", CFGF_NONE),
         CFG_STR("format_bad", "%title - %errno: %error", CFGF_NONE),
@@ -473,6 +485,7 @@ int main(int argc, char *argv[]) {
         CFG_SEC("load", load_opts, CFGF_NONE),
         CFG_SEC("memory", memory_opts, CFGF_NONE),
         CFG_SEC("cpu_usage", usage_opts, CFGF_NONE),
+        CFG_SEC("key_indicator", key_indicator_opts, CFGF_NONE),
         CFG_SEC("read_file", read_opts, CFGF_TITLE | CFGF_MULTI),
         CFG_END()};
 
@@ -929,6 +942,17 @@ int main(int argc, char *argv[]) {
                     .degraded_threshold = cfg_getfloat(sec, "degraded_threshold"),
                 };
                 print_cpu_usage(&ctx);
+                SEC_CLOSE_MAP;
+            }
+
+			CASE_SEC("key_indicator") {
+                SEC_OPEN_MAP("key_indicator");
+                key_indicator_ctx_t ctx = {
+                    .json_gen = json_gen,
+                    .buf = buffer,
+					.buflen = sizeof(buffer),
+                };
+                print_key_indicator(&ctx);
                 SEC_CLOSE_MAP;
             }
 
